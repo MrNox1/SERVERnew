@@ -131,9 +131,48 @@ async function getAllUsers() {
   }
 }
 
-exports.module = {
+async function userValidation(obj) {
+  const { userName, password } = obj;
+  let pool, result;
+  console.log(userName);
+  try {
+    pool = await connection();
+
+    let user = await pool
+      .request()
+      .input("userName", mssql.VarChar(250), userName).query(`
+        SELECT id, password 
+        FROM Usuarios 
+        WHERE userName = @userName
+      `);
+
+    if (user.rowsAffected[0]) {
+      const validatePASS = await bcrypt.compare(
+        password,
+        user.recordset[0].password
+      );
+
+      if (!validatePASS) {
+        return { mess: "incorrect password" };
+      }
+      return { id: user.recordset[0].id };
+    } else {
+      return { mess: "incorret user" };
+    }
+  } catch (err) {
+    console.error("Error al verificar usuario:", err.message);
+    return { exists: false, message: "Error en la verificación." };
+  } finally {
+    if (pool) {
+      pool.close();
+    }
+  }
+}
+
+module.exports = {
   addNewUser,
   deleteUser,
   getUserbyId,
   getAllUsers,
+  userValidation,
 };
