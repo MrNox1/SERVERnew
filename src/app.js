@@ -6,6 +6,7 @@ const helmet = require("helmet");
 const roleRouter = require("./router/role.router.js");
 const LoginRouter = require("./router/login.router.js");
 const registerRouter = require("./router/register.router.js");
+const usersRouter = require("./router/role.router.js");
 
 const { addNewUserController } = require("./controllers/register.controller");
 
@@ -20,6 +21,7 @@ app.use(express.json());
 
 app.use("/login", LoginRouter);
 app.use("/register", registerRouter);
+app.use("/users", usersRouter);
 
 app.get("/", (req, res) => {
   res.json("hola");
@@ -40,13 +42,19 @@ app.use("/roles", roleRouter);
 // app.put("/vehicles", vehiclesController.updateVehicles);
 // app.delete("/vehicles/:id", vehiclesController.deleteVehicles);
 
-const brandController = require("./controllers/brand.controller.js");
+const {
+  getAllBrand,
+  addNewBrands,
+  getBrandById,
+  updateBrand,
+  deleteBrand,
+} = require("./controllers/brand.controller.js");
 
-app.get("/brands", brandController.getAllBrand);
-app.get("/brands/:id", brandController.getBrandById);
-app.post("/brands", brandController.addNewBrands);
-app.put("/brands", brandController.updateBrand);
-app.delete("/brands/:id", brandController.deleteBrand);
+app.get("/brands", getAllBrand);
+app.get("/brands/:id", getBrandById);
+app.post("/brands", addNewBrands);
+app.put("/brands/:id", updateBrand);
+app.delete("/brands/:id", deleteBrand);
 
 const discountController = require("./controllers/discount.controller.js");
 

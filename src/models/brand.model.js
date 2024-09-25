@@ -3,18 +3,20 @@ const { connection } = require("../database.js");
 
 async function addNewBrand(obj) {
   const { name } = obj;
-  let pool, result;
+  let pool;
 
   try {
     pool = await connection();
-    result = await pool
+    const result = await pool
       .request()
       .input("nombre", mssql.VarChar, name)
       .query("INSERT INTO marca (nombre) OUTPUT INSERTED.* VALUES (@nombre)");
 
     console.log(result);
+    return result.recordset[0];
   } catch (err) {
-    console.error("Error al agregar el rol:", err.message);
+    console.error("Error al agregar la marca:", err.message);
+    throw err;
   } finally {
     if (pool) {
       pool.close();
@@ -22,78 +24,79 @@ async function addNewBrand(obj) {
   }
 }
 
+deleteBrandById({ id: 5 });
+
 async function deleteBrandById(obj) {
   const { id } = obj;
-  let pool, result;
-
+  let pool;
+  const val = Number(id);
   try {
     pool = await connection();
-    result = await pool
+    const result = await pool
       .request()
       .input("id", mssql.Int, id)
       .query("DELETE FROM marca OUTPUT DELETED.* WHERE id = @id");
 
-    console.log(result);
+    return result;
   } catch (err) {
-    console.error("Error al agregar el rol:", err.message);
+    console.error("Error al eliminar la marca:", err.message);
+    throw err; // Lanza el error para manejo en el controlador
   } finally {
     if (pool) {
       pool.close();
     }
-
-    return result;
   }
 }
 
 async function selectAllBrand() {
-  let pool, result;
+  let pool;
 
   try {
     pool = await connection();
-    result = await pool.request().query("SELECT * FROM marca");
+    const result = await pool.request().query("SELECT * FROM marca");
 
     console.log(result);
+    return result.recordset; // Retorna todos los registros
   } catch (err) {
-    console.error("Error al agregar el rol:", err.message);
+    console.error("Error al obtener las marcas:", err.message);
+    throw err; // Lanza el error para manejo en el controlador
   } finally {
     if (pool) {
       pool.close();
     }
-
-    return result.recordset;
   }
 }
 
 async function selectBrandById(obj) {
   const { id } = obj;
-  let pool, result;
+  let pool;
 
   try {
     pool = await connection();
-    result = await pool
+    const result = await pool
       .request()
       .input("id", mssql.Int, id)
       .query("SELECT * FROM marca WHERE id = @id");
 
     console.log(result);
+    return result.recordset; // Retorna el resultado, puede ser un array vacío si no se encuentra
   } catch (err) {
-    console.error("Error al agregar el rol:", err.message);
+    console.error("Error al obtener la marca:", err.message);
+    throw err; // Lanza el error para manejo en el controlador
   } finally {
     if (pool) {
       pool.close();
     }
-
-    return result.recordset;
   }
 }
 
 async function updateBrand(obj) {
   const { name, id } = obj;
-  let pool, result;
+  let pool;
 
   try {
     pool = await connection();
-    result = await pool
+    const result = await pool
       .request()
       .input("nombre", mssql.VarChar, name)
       .input("id", mssql.Int, id)
@@ -102,14 +105,14 @@ async function updateBrand(obj) {
       );
 
     console.log(result);
+    return result.recordset[0];
   } catch (err) {
-    console.error(err.message);
+    console.error("Error al actualizar la marca:", err.message);
+    throw err;
   } finally {
     if (pool) {
       pool.close();
     }
-
-    return result;
   }
 }
 

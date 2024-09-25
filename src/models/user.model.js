@@ -62,7 +62,7 @@ async function addNewUser(obj) {
     return {
       error: false,
       message: "Usuario agregado exitosamente.",
-      data: result,
+      data: obj,
     };
   } catch (err) {
     console.error("Error al agregar usuario:", err.message);
@@ -131,7 +131,7 @@ async function getAllUsers() {
     pool = await connection();
     result = await pool.request().query("SELECT * FROM Usuarios");
 
-    console.log(result.recordset);
+    console.log(result.recordsets);
   } catch (err) {
     console.error(err.message);
   } finally {
@@ -180,10 +180,36 @@ async function userValidation(obj) {
   }
 }
 
+async function changeState(obj) {
+  const { id } = obj;
+  let pool, result;
+
+  try {
+    pool = await connection();
+
+    let user = await pool.request().input("id", mssql.Int, id).query(`
+        UPDATE Usuarios SET  estado = ~estado  WHERE id = @id
+      `);
+
+    if (!user.rowsAffected[0]) {
+      return { error: true, message: " un valid id" };
+    }
+  } catch (err) {
+    console.error("Error al verificar usuario:", err.message);
+    return { exists: false, message: "Error en la verificación." };
+  } finally {
+    if (pool) {
+      pool.close();
+    }
+    return;
+  }
+}
+changeState({ id: 8 });
 module.exports = {
   addNewUser,
   deleteUser,
   getUserbyId,
   getAllUsers,
   userValidation,
+  changeState,
 };

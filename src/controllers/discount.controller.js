@@ -63,10 +63,11 @@ async function deleteStratumDiscount(req, res) {
 }
 
 async function updateStratumDiscount(req, res) {
-  const body = req.body;
-
+  const { name } = req.body;
+  const { id } = res.params;
+  console.log(name, id);
   try {
-    const result = await discountModel.updateStratumDiscount(body);
+    const result = await discountModel.updateStratumDiscount({ name, id });
 
     if (!result.rowsAffected[0]) {
       return res.status(404).json("mess:id invalida ");
