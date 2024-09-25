@@ -2,7 +2,6 @@ const mssql = require("mssql");
 const { connection } = require("../database.js");
 const bcrypt = require("bcrypt");
 
-
 async function addNewUser(obj) {
   const {
     name,
@@ -26,15 +25,18 @@ async function addNewUser(obj) {
     const exists = await pool
       .request()
       .input("userName", mssql.VarChar(250), userName)
+      .input("email", mssql.VarChar(250), email)
       .input("identificacion", mssql.VarChar(20), identification).query(`
-      SELECT COUNT(*) AS count 
-      FROM Usuarios 
-      WHERE userName = @userName OR identificacion = @identificacion
-    `);
+       SELECT * FROM Usuarios 
+        WHERE userName = @userName OR identificacion = @identificacion OR email = @email;
+      `);
 
-    if (exists.recordset[0].count > 0) {
-      console.log("El usario ya existe");
-      return { mess: "El usario ya existe" };
+    if (exists.rowsAffected[0]) {
+      return {
+        error: true,
+        message:
+          "El nombre de usuario o la identificación o el corrreo ya existen",
+      };
     }
 
     const passIncrpt = await bcrypt.hash(password, 10);
@@ -52,22 +54,28 @@ async function addNewUser(obj) {
       .input("estado", mssql.Bit, state)
       .input("idRol", mssql.Int, role)
       .input("imagen", mssql.VarChar(mssql.MAX), image).query(`
-            INSERT INTO Usuarios (nombre, apellido, userName, password, identificacion, direccion, email, celular, estado, idRol, imagen) 
-            VALUES (@nombre, @apellido, @userName, @password, @identificacion, @direccion, @email, @celular, @estado, @idRol, @imagen)
-          `);
+        INSERT INTO Usuarios (nombre, apellido, userName, password, identificacion, direccion, email, celular, estado, idRol, imagen) 
+        VALUES (@nombre, @apellido, @userName, @password, @identificacion, @direccion, @email, @celular, @estado, @idRol, @imagen)
+      `);
 
     console.log("Usuario agregado:", result);
+    return {
+      error: false,
+      message: "Usuario agregado exitosamente.",
+      data: result,
+    };
   } catch (err) {
     console.error("Error al agregar usuario:", err.message);
+    return {
+      error: true,
+      message: "Error al agregar usuario. Inténtalo de nuevo.",
+    };
   } finally {
     if (pool) {
       pool.close();
     }
-    return result;
   }
 }
-
-
 
 async function deleteUser(obj) {
   const { id } = obj;
