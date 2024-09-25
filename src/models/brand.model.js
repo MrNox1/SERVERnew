@@ -24,8 +24,6 @@ async function addNewBrand(obj) {
   }
 }
 
-deleteBrandById({ id: 5 });
-
 async function deleteBrandById(obj) {
   const { id } = obj;
   let pool;
@@ -47,7 +45,7 @@ async function deleteBrandById(obj) {
     }
   }
 }
-
+selectAllBrand();
 async function selectAllBrand() {
   let pool;
 
@@ -79,10 +77,10 @@ async function selectBrandById(obj) {
       .query("SELECT * FROM marca WHERE id = @id");
 
     console.log(result);
-    return result.recordset; // Retorna el resultado, puede ser un array vacío si no se encuentra
+    return result.recordset;
   } catch (err) {
     console.error("Error al obtener la marca:", err.message);
-    throw err; // Lanza el error para manejo en el controlador
+    throw err;
   } finally {
     if (pool) {
       pool.close();

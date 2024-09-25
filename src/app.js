@@ -8,6 +8,7 @@ const roleRouter = require("./router/role.router.js");
 const LoginRouter = require("./router/login.router.js");
 const registerRouter = require("./router/register.router.js");
 const usersRouter = require("./router/role.router.js");
+const stationRouter = require("./router/stationRouter.js");
 
 const { addNewUserController } = require("./controllers/register.controller");
 
@@ -18,12 +19,13 @@ const {
 
 const app = express();
 app.use(helmet());
-app.use(core());
+app.use(cors());
 app.use(express.json());
 
 app.use("/login", LoginRouter);
 app.use("/register", registerRouter);
 app.use("/users", usersRouter);
+app.use("/station", stationRouter);
 
 app.get("/", (req, res) => {
   res.json("hola");

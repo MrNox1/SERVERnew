@@ -1,7 +1,6 @@
 const mssql = require("mssql");
 const { connection } = require("../database.js");
 
-addNewStation({ name: "xxx", email: "cordes" });
 async function addNewStation(obj) {
   const { name, address, state, coordinates } = obj;
   let pool, result;
@@ -13,7 +12,7 @@ async function addNewStation(obj) {
       .input("nombre", mssql.VarChar(50), name)
       .input("direccion", mssql.VarChar(250), address)
       .input("estado", mssql.Bit, state)
-      .input("coordenadas", mssql.VarChar(250), coordinates).query(`
+      .input("coordenadas", mssql.VarChar, coordinates).query(`
           INSERT INTO estacion ( nombre, direccion, estado, coordenadas) 
           OUTPUT INSERTED.* 
           VALUES ( @nombre, @direccion, @estado, @coordenadas)
@@ -26,11 +25,11 @@ async function addNewStation(obj) {
     if (pool) {
       pool.close();
     }
-    return result;
+    return { data: result.recordset, rowsAffected: result.rowsAffected[0] };
   }
 }
 
-async function deleteBrandById(obj) {
+async function deleteStationById(obj) {
   const { id } = obj;
   let pool, result;
 
@@ -48,12 +47,11 @@ async function deleteBrandById(obj) {
     if (pool) {
       pool.close();
     }
-
-    return result;
+    return { data: result.recordset, rowsAffected: result.rowsAffected[0] };
   }
 }
 
-async function selectAllBrand() {
+async function selectAllStation() {
   let pool, result;
 
   try {
@@ -68,11 +66,11 @@ async function selectAllBrand() {
       pool.close();
     }
 
-    return result;
+    return { data: result.recordset, rowsAffected: result.rowsAffected[0] };
   }
 }
 
-async function selectBrandById(obj) {
+async function selectStationById(obj) {
   const { id } = obj;
   let pool, result;
 
@@ -91,7 +89,7 @@ async function selectBrandById(obj) {
       pool.close();
     }
 
-    return result;
+    return { data: result.recordset, rowsAffected: result.rowsAffected[0] };
   }
 }
 
@@ -121,14 +119,14 @@ async function updateStation(obj) {
     if (pool) {
       pool.close();
     }
-    return result;
+    return { data: result.recordset, rowsAffected: result.rowsAffected[0] };
   }
 }
 
 module.exports = {
   addNewStation,
-  deleteBrandById,
-  selectAllBrand,
-  selectBrandById,
+  deleteStationById,
+  selectAllStation,
+  selectStationById,
   updateStation,
 };

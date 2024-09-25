@@ -53,7 +53,7 @@ async function deleteBrand(req, res) {
       return res.status(400).json({ message: "ID requerido." });
     }
 
-    const result = await brandModel.deleteBrandById({ id }); // Asegúrate de pasar un objeto
+    const result = await brandModel.deleteBrandById({ id });
 
     console.log(result);
 
