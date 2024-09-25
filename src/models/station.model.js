@@ -1,6 +1,7 @@
 const mssql = require("mssql");
 const { connection } = require("../database.js");
 
+addNewStation({ name: "xxx", email: "cordes" });
 async function addNewStation(obj) {
   const { name, address, state, coordinates } = obj;
   let pool, result;

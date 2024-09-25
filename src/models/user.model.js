@@ -2,80 +2,79 @@ const mssql = require("mssql");
 const { connection } = require("../database.js");
 const bcrypt = require("bcrypt");
 
-async function addNewUser(obj) {
-  const {
-    name,
-    lastName,
-    userName,
-    password,
-    identification,
-    adress,
-    email,
-    phone,
-    state,
-    role,
-    image,
-  } = obj;
+// async function addNewUser(obj) {
+//   const {
+//     name,
+//     lastName,
+//     userName,
+//     password,
+//     identification,
+//     adress,
+//     email,
+//     phone,
+//     state,
+//     role,
+//     image,
+//   } = obj;
 
-  let pool, result;
+//   let pool;
 
-  try {
-    pool = await connection();
+//   try {
+//     pool = await connection();
 
-    const exists = await pool
-      .request()
-      .input("userName", mssql.VarChar(250), userName)
-      .input("email", mssql.VarChar(250), email)
-      .input("identificacion", mssql.VarChar(20), identification).query(`
-       SELECT * FROM Usuarios 
-        WHERE userName = @userName OR identificacion = @identificacion OR email = @email;
-      `);
+//     const exists = await pool
+//       .request()
+//       .input("userName", mssql.VarChar(250), userName)
+//       .input("email", mssql.VarChar(250), email)
+//       .input("identificacion", mssql.VarChar(20), identification).query(`
+//         SELECT * FROM Usuarios
+//         WHERE userName = @userName OR identificacion = @identificacion OR email = @email;
+//       `);
 
-    if (exists.rowsAffected[0]) {
-      return {
-        error: true,
-        message:
-          "El nombre de usuario o la identificación o el corrreo ya existen",
-      };
-    }
+//     if (exists.recordset.length > 0) {
+//       return {
+//         error: true,
+//         message: "El nombre de usuario, identificación o correo ya existen.",
+//       };
+//     }
 
-    const passIncrpt = await bcrypt.hash(password, 10);
+//     const passIncrpt = await bcrypt.hash(password, 10);
 
-    result = await pool
-      .request()
-      .input("nombre", mssql.VarChar(50), name)
-      .input("apellido", mssql.VarChar(50), lastName)
-      .input("userName", mssql.VarChar(250), userName)
-      .input("password", mssql.VarChar(250), passIncrpt)
-      .input("identificacion", mssql.VarChar(20), identification)
-      .input("direccion", mssql.VarChar(100), adress)
-      .input("email", mssql.VarChar(100), email)
-      .input("celular", mssql.VarChar(15), phone)
-      .input("estado", mssql.Bit, state)
-      .input("idRol", mssql.Int, role)
-      .input("imagen", mssql.VarChar(mssql.MAX), image).query(`
-        INSERT INTO Usuarios (nombre, apellido, userName, password, identificacion, direccion, email, celular, estado, idRol, imagen) 
-        VALUES (@nombre, @apellido, @userName, @password, @identificacion, @direccion, @email, @celular, @estado, @idRol, @imagen)
-      `);
+//     const result = await pool
+//       .request()
+//       .input("nombre", mssql.VarChar(50), name)
+//       .input("apellido", mssql.VarChar(50), lastName)
+//       .input("userName", mssql.VarChar(250), userName)
+//       .input("password", mssql.VarChar(250), passIncrpt)
+//       .input("identificacion", mssql.VarChar(20), identification)
+//       .input("direccion", mssql.VarChar(100), adress)
+//       .input("email", mssql.VarChar(100), email)
+//       .input("celular", mssql.VarChar(15), phone)
+//       .input("estado", mssql.Bit, state)
+//       .input("idRol", mssql.Int, role)
+//       .input("imagen", mssql.VarChar(mssql.MAX), image).query(`
+//         INSERT INTO Usuarios (nombre, apellido, userName, password, identificacion, direccion, email, celular, estado, idRol, imagen)
+//         VALUES (@nombre, @apellido, @userName, @password, @identificacion, @direccion, @email, @celular, @estado, @idRol, @imagen);
+//       `);
 
-    console.log("Usuario agregado:", result);
-    return {
-      error: false,
-      message: "Usuario agregado exitosamente.",
-      data: obj,
-    };
-  } catch (err) {
-    console.error("Error al agregar usuario:", err.message);
-    return {
-      error: true,
-      message: "Error al agregar usuario. Inténtalo de nuevo.",
-    };
-  } finally {
-    if (pool) {
-      pool.close();
-    }
-  }
-}
+//     console.log("Usuario agregado:", result);
+//     return {
+//       error: false,
+//       message: "Usuario agregado exitosamente.",
+//       data: { userName, email }, // Devuelve solo datos relevantes
+//     };
+//   } catch (err) {
+//     console.error("Error al agregar usuario:", err.message);
+//     return {
+//       error: true,
+//       message: "Error al agregar usuario. Inténtalo de nuevo.",
+//     };
+//   } finally {
+//     if (pool) {
+//       pool.close();
+//     }
+//   }
+// }
 
 async function deleteUser(obj) {
   const { id } = obj;
@@ -206,7 +205,6 @@ async function changeState(obj) {
 }
 changeState({ id: 8 });
 module.exports = {
-  addNewUser,
   deleteUser,
   getUserbyId,
   getAllUsers,

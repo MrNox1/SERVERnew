@@ -2,6 +2,7 @@ const express = require("express");
 const jsonwebtoken = require("jsonwebtoken");
 const secret = require("./secret.js");
 const helmet = require("helmet");
+const cors = require("cors");
 
 const roleRouter = require("./router/role.router.js");
 const LoginRouter = require("./router/login.router.js");
@@ -17,6 +18,7 @@ const {
 
 const app = express();
 app.use(helmet());
+app.use(core());
 app.use(express.json());
 
 app.use("/login", LoginRouter);
