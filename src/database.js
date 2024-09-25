@@ -27,5 +27,5 @@ async function connection() {
     throw err;
   }
 }
-
+connection();
 module.exports = { connection };

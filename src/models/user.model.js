@@ -2,6 +2,7 @@ const mssql = require("mssql");
 const { connection } = require("../database.js");
 const bcrypt = require("bcrypt");
 
+
 async function addNewUser(obj) {
   const {
     name,
@@ -65,6 +66,8 @@ async function addNewUser(obj) {
     return result;
   }
 }
+
+
 
 async function deleteUser(obj) {
   const { id } = obj;
@@ -141,7 +144,7 @@ async function userValidation(obj) {
     let user = await pool
       .request()
       .input("userName", mssql.VarChar(250), userName).query(`
-        SELECT id, password 
+        SELECT * 
         FROM Usuarios 
         WHERE userName = @userName
       `);

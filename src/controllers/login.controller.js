@@ -1,1 +1,1 @@
-async function userLoginController(ereq, res) {}
+async function userLoginController(Req, res) { }

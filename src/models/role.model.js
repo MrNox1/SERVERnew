@@ -10,7 +10,7 @@ async function addNewRole(obj) {
     result = await pool
       .request()
       .input("nombre", mssql.VarChar, name)
-      .query("INSERT INTO rol (nombre) VALUES (@nombre)");
+      .query("INSERT INTO rol (nombre) OUTPUT INSERTED.* VALUES (@nombre)");
 
     console.log(result);
   } catch (err) {
@@ -19,10 +19,11 @@ async function addNewRole(obj) {
     if (pool) {
       pool.close();
     }
+    return result;
   }
 }
 
-async function addNewRole(obj) {
+async function deleteRole(obj) {
   const { id } = obj;
   let pool, result;
 
@@ -30,8 +31,8 @@ async function addNewRole(obj) {
     pool = await connection();
     result = await pool
       .request()
-      .input("id", mssql.VarChar, id)
-      .query("DELETE FROM rol WHERE id = @id");
+      .input("id", mssql.Int, id)
+      .query("DELETE FROM rol OUTPUT deleted.* WHERE id = @id");
 
     console.log(result);
   } catch (err) {
@@ -44,3 +45,80 @@ async function addNewRole(obj) {
     return result;
   }
 }
+
+async function getRoleById(obj) {
+  const { id } = obj;
+  let pool, result;
+
+  try {
+    pool = await connection();
+    result = await pool
+      .request()
+      .input("id", mssql.Int, id)
+      .query("SELECT * FROM rol WHERE id = @id");
+
+    console.log(result);
+  } catch (err) {
+    console.error(err.message);
+  } finally {
+    if (pool) {
+      pool.close();
+    }
+
+    return result;
+  }
+}
+
+async function getAllRole() {
+  let pool, result;
+
+  try {
+    pool = await connection();
+    result = await pool.request().query("SELECT * FROM rol ");
+
+    console.log(result);
+  } catch (err) {
+    console.error(err.message);
+  } finally {
+    if (pool) {
+      pool.close();
+    }
+
+    return result;
+  }
+}
+
+async function updateRoleById(obj) {
+  const { id, name } = obj;
+  let pool, result;
+
+  try {
+    pool = await connection();
+    result = await pool
+      .request()
+      .input("id", mssql.Int, id)
+      .input("nombre", mssql.VarChar, name)
+      .query(
+        `UPDATE rol
+          SET nombre = @nombre
+          OUTPUT inserted.*
+          WHERE id = @id`
+      );
+
+    console.log(result);
+  } catch (err) {
+    console.error(err.message);
+  } finally {
+    if (pool) {
+      pool.close();
+    }
+
+    return result;
+  }
+}
+
+getAllRole();
+// addNewRole({ name: "amo" });
+// updateRoleById({ id: 3, name: "amoo" });
+// getRoleById({ id: 3 });
+deleteRole({ id: 3 });
