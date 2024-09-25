@@ -9,6 +9,7 @@ const LoginRouter = require("./router/login.router.js");
 const registerRouter = require("./router/register.router.js");
 const usersRouter = require("./router/role.router.js");
 const stationRouter = require("./router/stationRouter.js");
+const cycletripRouter = require("./router/cycletrip.router.js");
 
 const { addNewUserController } = require("./controllers/register.controller");
 
@@ -26,6 +27,7 @@ app.use("/login", LoginRouter);
 app.use("/register", registerRouter);
 app.use("/users", usersRouter);
 app.use("/station", stationRouter);
+app.use("/cyclotrip", cycletripRouter);
 
 app.get("/", (req, res) => {
   res.json("hola");
