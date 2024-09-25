@@ -24,6 +24,7 @@ async function addNewRole(obj) {
 }
 
 async function deleteRole(obj) {
+  console.log(obj);
   const { id } = obj;
   let pool, result;
 
@@ -117,8 +118,16 @@ async function updateRoleById(obj) {
   }
 }
 
-getAllRole();
+// getAllRole();
 // addNewRole({ name: "amo" });
 // updateRoleById({ id: 3, name: "amoo" });
 // getRoleById({ id: 3 });
-deleteRole({ id: 3 });
+// deleteRole({ id: 3 });
+
+module.exports = {
+  addNewRole,
+  deleteRole,
+  getRoleById,
+  getAllRole,
+  updateRoleById,
+};

@@ -1,93 +1,85 @@
 const roleModule = require("../models/role.model");
 
-async function getAllRole(req,res) {
-    
-   try{
-        const result = await roleModule.getAllRole()
-        return res.status(200).json(result)
-   }catch(err){
-    return res.status(500).json({err})
-   }
-
+async function getAllRole(req, res) {
+  const result = await roleModule.getAllRole();
+  console.log(result);
+  return res.status(200).json(result);
 }
 
-async function getRolesById(req,res) {
-    const {id} = req.params
-    try{
-
-        if(!id){
-            return res.status(404).json("mess:id requnred ")
-        }
-         const result = await getRolesById({id})
-
-         if(!result.rowsAffected[0]){
-            return res.status(404).json({mess:"id invalida "})
-         }
-
-         return res.status(200).json(result)
-    }catch(err){
-     return res.status(500).json({err})
+async function getRolesById(req, res) {
+  const { id } = req.params;
+  try {
+    if (!id) {
+      return res.status(404).json("mess:id requnred ");
     }
- 
- }
+    const result = await roleModule.getRoleById({ id });
 
- async function addNewRoles(req,res) {
-    const body = req.params
-    try{
-         const result = await roleModule.addNewRoles(body);
-
-         if(!result.rowsAffected[0]){
-            return res.status(404).json({mess:"id invalida "})
-         }
-
-         return res.status(200).json(result)
-    }catch(err){
-     return res.status(500).json({err})
+    if (!result.rowsAffected[0]) {
+      return res.status(404).json({ mess: "id invalida " });
     }
- }
 
- async function deleteRoles(req,res) {
-    const {id} = req.params
-   
-    try{
-        if(!id){
-            return res.status(404).json("mess:id requnred ")
-        }
+    return res.status(200).json(result);
+  } catch (err) {
+    return res.status(500).json({ err: "malo" });
+  }
+}
 
-         const result = await roleModule.deleteRoles({id});
+async function addNewRoles(req, res) {
+  const body = req.body;
 
-         if(!result.rowsAffected[0]){
-            return res.status(404).json({mess:"id invalida "})
-         }
+  try {
+    const result = await roleModule.addNewRole(body);
 
-         return res.status(200).json(result)
-    }catch(err){
-     return res.status(500).json({err})
+    if (!result.rowsAffected[0]) {
+      return res.status(404).json({ mess: "id invalida " });
     }
- }
 
- async function updateRoles(req,res) {
-    const body = req.body
-   
-    try{
-       
-        
-         const result = await roleModule.updateRoles(body);
+    return res.status(200).json(result);
+  } catch (err) {
+    return res.status(500).json({ err });
+  }
+}
 
-         if(!result.rowsAffected[0]){
-            return res.status(404).json("mess:id invalida ")
-         }
+async function deleteRoles(req, res) {
+  const { id } = req.params;
 
-         return res.status(200).json(result)
-    }catch(err){
-     return res.status(500).json({err})
+  try {
+    if (!id) {
+      return res.status(404).json({ mess: "id requnred " });
     }
- }
 
- module.exports ={
-    getAllRole,
-getRolesById,
-addNewRoles,
-deleteRoles,
-updateRoles,
- }
+    const result = await roleModule.deleteRole({ id });
+
+    if (!result.rowsAffected[0]) {
+      return res.status(404).json({ mess: "id invalida " });
+    }
+
+    return res.status(200).json(result);
+  } catch (err) {
+    return res.status(500).json({ err });
+  }
+}
+
+async function updateRoles(req, res) {
+  const body = req.body;
+
+  try {
+    const result = await roleModule.updateRoleById(body);
+
+    if (!result.rowsAffected[0]) {
+      return res.status(404).json({ mess: "id invalida " });
+    }
+
+    return res.status(200).json(result);
+  } catch (err) {
+    return res.status(500).json({ err });
+  }
+}
+
+module.exports = {
+  getAllRole,
+  getRolesById,
+  addNewRoles,
+  deleteRoles,
+  updateRoles,
+};
